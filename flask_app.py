@@ -8,9 +8,8 @@ from Timer import Timer
 
 load_dotenv()
 
+
 app = Flask(__name__)
-
-
 
 b_countdown = 30
 c_countdown = 20
