@@ -15,16 +15,16 @@ Here are some things we need to do:
     - Schedules
     - Real-time Locations
     
-######Endpoint for Chestnut Hill Ave B Station predictions:
+###### Endpoint for Chestnut Hill Ave B Station predictions:
 https://api-v3.mbta.com/predictions/?filter[stop]=place-chill&filter[route]=Green-B
 
-######Endpoint for Cleveland Circle C Station predictions:
+###### Endpoint for Cleveland Circle C Station predictions:
 https://api-v3.mbta.com/predictions/?filter[stop]=place-clmnl&filter[route]=Green-C
 
-######Endpoint for Reservoir D Station predictions:
+###### Endpoint for Reservoir D Station predictions:
 https://api-v3.mbta.com/predictions/?filter[stop]=place-rsmnl&filter[route]=Green-D
 
-######MBTA Best Practices (Including for Countdown Clocks!)
+###### MBTA Best Practices (Including for Countdown Clocks!)
 https://www.mbta.com/developers/v3-api/best-practices
   - Have a way to count down in seconds, from a given arrival time. This lets us keep track of time.
   - Have a way to convert time (or status) into a useful display message
