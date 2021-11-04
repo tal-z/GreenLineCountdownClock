@@ -14,7 +14,9 @@ Here are some things we need to do:
     - Predictions
     - Schedules
     - Real-time Locations
-    
+  - Have a way to count down in seconds, from a given arrival time. This lets us keep track of time.
+  - Have a way to convert time (or status) into a useful display message
+   
 ###### Endpoint for Chestnut Hill Ave B Station predictions:
 https://api-v3.mbta.com/predictions/?filter[stop]=place-chill&filter[route]=Green-B
 
@@ -26,5 +28,3 @@ https://api-v3.mbta.com/predictions/?filter[stop]=place-rsmnl&filter[route]=Gree
 
 ###### MBTA Best Practices (Including for Countdown Clocks!)
 https://www.mbta.com/developers/v3-api/best-practices
-  - Have a way to count down in seconds, from a given arrival time. This lets us keep track of time.
-  - Have a way to convert time (or status) into a useful display message
