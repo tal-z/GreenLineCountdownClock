@@ -1,5 +1,3 @@
-import os
-
 from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify
 
@@ -51,11 +49,11 @@ timers = {'b_timer': b_timer, 'c_timer': c_timer, 'd_timer': d_timer}
 @app.route("/", methods=["GET"])
 def index():
     global b_timer
-    b_timer.reset_prediction()
+    b_timer.set_timer()
     global c_timer
-    c_timer.reset_prediction()
+    c_timer.set_timer()
     global d_timer
-    d_timer.reset_prediction()
+    d_timer.set_timer()
     return render_template("index.html")
 
 
