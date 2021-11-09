@@ -5,6 +5,7 @@ import math
 
 
 sess = session()
+API_KEY = "XXXXXXXX"
 
 
 # Custom function to round numbers in the normal human way, and not the bizarre python way.
@@ -23,9 +24,9 @@ class Timer:
     def __init__(self, name, predictions_url, schedule_url,duration=0):
         self.name = name
         self.predictions_url = predictions_url
-        self.predictions = sess.get(self.predictions_url).json()
+        self.predictions = sess.get(self.predictions_url, headers={"x-api-key": API_KEY}).json()
         self.schedule_url = schedule_url
-        self.schedule = sess.get(self.schedule_url).json()
+        self.schedule = sess.get(self.schedule_url, headers={"x-api-key": API_KEY}).json()
         self.duration = duration
         self.arrival_time = None
         self.departure_time = None
@@ -100,7 +101,9 @@ class Timer:
 
 
     def set_prediction(self):
-        self.predictions = sess.get(self.predictions_url).json()
+        self.predictions = sess.get(self.predictions_url, headers={"x-api-key": API_KEY})
+        print(self.predictions.headers)
+        self.predictions = self.predictions.json()
         print("all predictions:", self.name, self.predictions)
         if 'data' in self.predictions:
             if self.predictions['data']:
