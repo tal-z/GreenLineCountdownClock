@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style>
-
-    </style>
     <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <style>
+        div.card.card-body:hover {
+            background-color: yellow;
+        }
+    </style>
     <title>Look Up Stops</title>
 </head>
 <body>
@@ -40,6 +44,10 @@
             matchList.innerHTML = '';
         }
 
+        if (matches.length === 0) {
+            matchList.innerHTML = '';
+        }
+
         outputHtml(matches);
     };
 
@@ -47,13 +55,23 @@
     const outputHtml = matches => {
         if(matches.length > 0) {
             const html = matches.map(match => `
-                <div class="card card-body">
-                    <h4>Name: ${match.attributes.name}<br><span class="text-primary">Description: ${match.attributes.description}</span><br></h4>
+                <div class="card card-body" onclick="populateSearch()">
+                    <h4><span class="text-primary">Name: ${match.attributes.name}<br>Description: ${match.attributes.description}</span><br></h4>
                 </div>
             `).join('');
 
             matchList.innerHTML = html;
         }
+    }
+
+    function populateSearch() {
+        var x = event.clientX, y = event.clientY,
+        elementMouseIsOver = document.elementFromPoint(x, y);
+        let re = /Name:\s(.*)Description/;
+        let stopContent = elementMouseIsOver.textContent.match(re)[1];
+        document.getElementById('search').value = stopContent;
+        matches = [];
+        matchList.innerHTML = '';
     }
 
 
