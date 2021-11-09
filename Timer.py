@@ -1,11 +1,15 @@
+
+from dotenv import load_dotenv
 from requests import session
 import datetime
 from time import sleep
 import math
+import os
 
+load_dotenv()
 
 sess = session()
-API_KEY = "XXXXXXXX"
+API_KEY = os.getenv('MBTA_API_KEY')
 
 
 # Custom function to round numbers in the normal human way, and not the bizarre python way.
