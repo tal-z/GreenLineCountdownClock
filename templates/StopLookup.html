@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+
+    </style>
+    <meta charset="UTF-8">
+    <title>Look Up Stops</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 m-auto">
+                <h3 class="texr-center mb-3">
+                    MBTA Stop Lookup
+                </h3>
+                <div class="form-group">
+                    <input type="text" id="search" class="form-control form-control-lg" placeholder="Enter stop name...">
+                </div>
+                <div id="match-list"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const search = document.getElementById('search');
+    const matchList = document.getElementById('match-list');
+
+    const searchStops = async searchText => {
+        const res = await fetch('https://api-v3.mbta.com/stops?fields[stop]=name,description');
+        const stops = await res.json();
+
+        let matches = stops.data.filter(stop => {
+            const regex = new RegExp(`${searchText}`, 'gi');
+            return stop.attributes.name.match(regex) // || stop.attributes.description.match(regex);
+        });
+
+        if (searchText.length === 0) {
+            matches = [];
+            matchList.innerHTML = '';
+        }
+
+        outputHtml(matches);
+    };
+
+    //Show results in html
+    const outputHtml = matches => {
+        if(matches.length > 0) {
+            const html = matches.map(match => `
+                <div class="card card-body">
+                    <h4>Name: ${match.attributes.name}<br><span class="text-primary">Description: ${match.attributes.description}</span><br></h4>
+                </div>
+            `).join('');
+
+            matchList.innerHTML = html;
+        }
+    }
+
+
+    search.addEventListener('input', () => searchStops(search.value));
+</script>
+</html>
