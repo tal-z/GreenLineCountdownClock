@@ -1,10 +1,8 @@
-from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify
 
 from Timer import Timer
 
 
-load_dotenv()
 
 
 app = Flask(__name__)
