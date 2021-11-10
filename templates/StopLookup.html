@@ -19,7 +19,17 @@
                     MBTA Stop Lookup
                 </h3>
                 <div class="form-group">
-                    <input type="text" id="search" class="form-control form-control-lg" placeholder="Enter stop name...">
+                    <label for="transit-options">Choose a mode of transit:</label>
+                    <select name="transit-options" id="transit-options" class="form-control form-control-lg" >
+                        <option value="" selected>Select a Transit Mode</option>
+                        <option value="subway">Subway</option>
+                        <option value="bus">Bus</option>
+                        <option value="commuter-rail">Commuter Rail</option>
+                        <option value="ferry">Ferry</option>
+                    </select>
+                    <br>
+                    <label for="search">Start Typing a Stop Name:</label>
+                    <input type="text" name="search" id="search" class="form-control form-control-lg" placeholder="Enter stop name...">
                 </div>
                 <div id="match-list"></div>
             </div>
@@ -31,7 +41,11 @@
     const matchList = document.getElementById('match-list');
 
     const searchStops = async searchText => {
-        const res = await fetch('https://api-v3.mbta.com/stops?fields[stop]=name,description');
+        let transitMode = document.getElementById('transit-options').value;
+        var transitModeDict = {'subway': '0,1', 'commuter-rail': '2', 'bus': '3', 'ferry': '4'};
+
+        const res = await fetch(`https://api-v3.mbta.com/stops?fields[stop]=name,description&filter[route_type]=${transitModeDict[transitMode]}`);
+        console.log(res);
         const stops = await res.json();
 
         let matches = stops.data.filter(stop => {
@@ -73,7 +87,6 @@
         matches = [];
         matchList.innerHTML = '';
     }
-
 
     search.addEventListener('input', () => searchStops(search.value));
 </script>
