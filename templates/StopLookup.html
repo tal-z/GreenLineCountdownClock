@@ -19,34 +19,75 @@
                     MBTA Stop Lookup
                 </h3>
                 <div class="form-group">
-                    <label for="transit-options">Choose a mode of transit:</label>
-                    <select name="transit-options" id="transit-options" class="form-control form-control-lg" >
-                        <option value="" selected>Select a Transit Mode</option>
-                        <option value="subway">Subway</option>
-                        <option value="bus">Bus</option>
-                        <option value="commuter-rail">Commuter Rail</option>
-                        <option value="ferry">Ferry</option>
-                    </select>
-                    <br>
-                    <label for="search">Start Typing a Stop Name:</label>
-                    <input type="text" name="search" id="search" class="form-control form-control-lg" placeholder="Enter stop name...">
+                    <form action="/CreateTimer" method="post">
+                        <div id="transit-options-container">
+                            <label for="transit-options">Choose a mode of transit:</label>
+                            <select name="transit-options" id="transit-options" class="form-control form-control-lg" >
+                                <option value="" selected>Select a Transit Mode</option>
+                                <option value="subway">Subway</option>
+                                <option value="bus">Bus</option>
+                                <option value="commuter-rail">Commuter Rail</option>
+                                <option value="ferry">Ferry</option>
+                            </select>
+                            <br>
+                        </div>
+                        <div id="search-container">
+                            <label for="search">Start Typing a Stop Name:</label>
+                            <input type="text" name="search" id="search" class="form-control form-control-lg" placeholder="Enter stop name...">
+                            <br>
+                        </div>
+                        <div id="route-options-container" style="display:none">
+                            <label for="route-options">Choose a Route at Your Stop:</label>
+                            <select name="route-options" id="route-options" class="form-control form-control-lg" onchange="populateDirections()">
+                                <option value="" selected>Select a Route</option>
+                            </select>
+                            <br>
+                        </div>
+                        <div id="direction-options-container" style="display:none">
+                            <label for="direction-options">Choose a Direction to Travel:</label>
+                            <select name="direction-options" id="direction-options" class="form-control form-control-lg" onchange="showButton()">
+                                <option value="" selected>Select a Direction</option>
+                            </select>
+                            <br>
+                        </div>
+                        <div id="hidden-inputs-container" style="display:none">
+                            <input type="text" name="stopid" id="stopid">
+                            <input type="text" name="routeid" id="routeid">
+                        </div>
+                        <button type="submit" id="submit-button" class="btn btn-primary" style="display:none">Get My Countdown Timer!</button>
+                    </form>
                 </div>
-                <div id="match-list"></div>
+                <div id="match-list" style="display:block"></div>
             </div>
         </div>
     </div>
 </body>
 <script>
+    const transitOptions = document.getElementById('transit-options');
     const search = document.getElementById('search');
     const matchList = document.getElementById('match-list');
+    const routeOptions = document.getElementById('route-options-container');
+    const directionOptions = document.getElementById('direction-options-container')
+    const stopID = document.getElementById('stopid')
+    const routeID = document.getElementById('routeid')
 
     const searchStops = async searchText => {
         let transitMode = document.getElementById('transit-options').value;
         var transitModeDict = {'subway': '0,1', 'commuter-rail': '2', 'bus': '3', 'ferry': '4'};
 
-        const res = await fetch(`https://api-v3.mbta.com/stops?fields[stop]=name,description&filter[route_type]=${transitModeDict[transitMode]}`);
-        console.log(res);
+        const res = await fetch(
+            `https://api-v3.mbta.com/stops?fields[stop]=name,description&filter[route_type]=${transitModeDict[transitMode]}`
+            );
         const stops = await res.json();
+        document.getElementById('route-options-container').style.display = "none";
+        document.getElementById('direction-options-container').style.display = "none";
+        document.getElementById('direction-options-container').style.display = "none";
+        document.getElementById('submit-button').style.display = "none";
+
+
+        if (matchList.style.display == 'none') {
+           matchList.style.display = 'block'
+        };
 
         let matches = stops.data.filter(stop => {
             const regex = new RegExp(`${searchText}`, 'gi');
@@ -69,25 +110,73 @@
     const outputHtml = matches => {
         if(matches.length > 0) {
             const html = matches.map(match => `
-                <div class="card card-body" onclick="populateSearch()">
-                    <h4><span class="text-primary">Name: ${match.attributes.name}<br>Description: ${match.attributes.description}</span><br></h4>
+                <div class="card card-body" onclick="populateSearch()" data-stopid="${match.id}">
+                    <h4 data-stopid="${match.id}"><span class="text-primary" data-stopid="${match.id}">Name: ${match.attributes.name}<br>Description: ${match.attributes.description}</span><br></h4>
                 </div>
-            `).join('');
-
-            matchList.innerHTML = html;
+            `).join('');            
+            matchList.innerHTML = html; // Note for later to try and understand why not to do this.
         }
     }
 
-    function populateSearch() {
+    function populateSearch(route_array) {
         var x = event.clientX, y = event.clientY,
         elementMouseIsOver = document.elementFromPoint(x, y);
+        stopID.value = elementMouseIsOver.dataset.stopid;
         let re = /Name:\s(.*)Description/;
         let stopContent = elementMouseIsOver.textContent.match(re)[1];
         document.getElementById('search').value = stopContent;
         matches = [];
         matchList.innerHTML = '';
+        routeOptions.style.display = 'block';
+        if (matchList.style.display != 'none') {
+           matchList.style.display = 'none';
+        }
+        // after populating search, I want to make an API call and get the routes available at a given stop with which to populate the drop-down.
+        // leaving off: my last then logs route.data, which is an array of all the routes at a given stop
+        let routes = fetch(`https://api-v3.mbta.com/routes?filter[stop]=${elementMouseIsOver.dataset.stopid}`);
+        routes.then(
+            (route) => route.json()
+            ).then(
+                (route) => {
+                    let route_names = [['Select a Route', -1]];
+                    for (var i = 0; i < route.data.length; i++){
+                        route_names.push([route.data[i].attributes.long_name, i, route.data[i].attributes.direction_names, route.data[i].id]);
+                    }
+                    return route_names;
+                }).then(
+                    (route_names) => route_names.map(route_name => `
+                        <option value="${route_name[1]}" data-direction-names="${route_name[2]}" data-routeid="${route_name[3]}">${route_name[0]}</option>
+                    `).join('')        
+                ).then(
+                    (route_option_tags) => document.getElementById('route-options').innerHTML = route_option_tags
+                );
     }
 
+    function populateDirections(routes) {
+        let options = routeOptions.children[1].children;
+        let route_index = Number(routeOptions.children[1].value) + 1;
+        let directions_html = '<option value="-1">Select a Direction</option>';
+        if (route_index > -1) {
+                console.log(route_index);
+                let directions = options[route_index].dataset.directionNames.split(',');
+                console.log(directions);
+                console.log(directions_html);
+                for (i = 0; i < directions.length; i++){
+                    directions_html += `<option value="${i}">${directions[i]}</option>`
+                }
+            }
+            document.getElementById('direction-options').innerHTML = directions_html;
+            directionOptions.style.display = 'block';
+            routeID.value = options[route_index].dataset.routeid;
+            console.log(routeID.value);
+        }
+    
+    function showButton() {
+        document.getElementById('submit-button').style.display = "block";
+    }
+
+    transitOptions.addEventListener('change', () => searchStops(search.value));
     search.addEventListener('input', () => searchStops(search.value));
+
 </script>
 </html>
