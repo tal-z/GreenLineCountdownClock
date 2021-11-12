@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 
 from Timer import Timer
 
@@ -54,11 +54,6 @@ def index():
     d_timer.set_timer()
     return render_template("index.html")
 
-@app.route("/StopLookup", methods=["GET"])
-def stop_lookup():
-    return render_template("StopLookup.html")
-
-
 @app.route("/_update_timer/<tmr>", methods=["GET", "POST"])
 def timer(tmr):
     timers[tmr].decrement()
@@ -66,6 +61,21 @@ def timer(tmr):
     display = timers[tmr].set_display()
     return jsonify({f'{timers[tmr].name}_display': display,
                     f'{timers[tmr].name}_seconds_remaining': f'{seconds_remaining} seconds'})
+
+@app.route("/StopLookup", methods=["GET"])
+def stop_lookup():
+    return render_template("StopLookup.html")
+
+@app.route("/CreateTimer", methods=["GET", "POST"])
+def create_timer():
+    print("in the create_timer route")
+    if request.method == "POST":
+        """create a timer based on attributes passed in the post"""
+        print("you posted here!")
+        print(request.values)
+        return  render_template("NewTimer.html")
+    else:
+        return render_template("StopLookup.html")
 
 
 if __name__ == "__main__":
