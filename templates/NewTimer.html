@@ -1,1 +1,41 @@
-TIMER GOES HERE!!!!!!!!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="15">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Title</title>
+</head>
+<body>
+  <div class="card">
+    <h5 class="card-header">Featured</h5>
+    <div class="card-body">
+      <h5 class="card-title">{{ context.new_timer.name }}</h5>
+      <p class="card-text"><span id="{{ context.new_timer.name }}_display"></span> | <span id="{{ context.new_timer.name }}_seconds_remaining"></span></p>
+    </div>
+  </div>
+
+    
+   
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+   <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+   <script type="text/javascript">
+      const root_url = {{request.root_url|tojson|safe}};
+      const intervalID = setInterval(update_values, 1000);
+
+      function update_values() {
+        $.getJSON(
+          root_url + "_update_timer" + "/new",
+          data => {
+            $("#new_display").text(data.new_display);
+            $("#new_seconds_remaining").text(data.new_seconds_remaining);
+            if (data.new_display == 0) {
+              clearInterval(intervalID);
+            }
+          }
+        )
+      }
+</script>
+
+</body>
+</html>
