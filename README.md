@@ -7,7 +7,7 @@
 2) Explore the relationship between a form and a countdown timer
 3) Figure out how to display a countdown timer based on a user completing a form
 4) Explore user accounts in Django? Make a way for users to create, log in/log out of an account, create and save timers, etc.
-
+  - Disable submit button until its visible
   - Improve the set_display() method to utilize schedule data
   - Try to find and fix the bug where predictions exist but don't get displayed
   - Code review of the javascript/html to make sure it does what I think it does
