@@ -1,14 +1,17 @@
 import requests
-import json
 import pprint
+import os
+
 
 sess = requests.session()
-response = sess.get('https://api-v3.mbta.com/stops?fields[stop]=name,description')
-
-print(response)
-
-results = response.json()
-pprint.pprint(results['data'])
+API_KEY = os.getenv('MBTA_API_KEY')
 
 
-#print(json.dumps(results, indent='\t'))
+routes_response = sess.get(f'https://api-v3.mbta.com/routes?filter[type]=0,1', headers={"x-api-key": API_KEY})
+routes = routes_response.json()
+route_ids = [route["id"] for route in routes['data']]
+print(route_ids)
+
+stops_response = sess.get(f'https://api-v3.mbta.com/stops?filter[route]={",".join(route_ids)}')
+stops = stops_response.json()
+pprint.pprint(stops)
