@@ -53,6 +53,7 @@ class Timer:
 
 
     def set_display(self):
+        print(self.duration)
         if self.status == 'No Live Prediction Available':
             if self.duration <= 30:
                 self.display = 'Arriving - Not Live'
@@ -95,7 +96,7 @@ class Timer:
                                           key=lambda x: datetime.datetime.strptime(
                                               x['attributes']['departure_time'],
                                               '%Y-%m-%dT%H:%M:%S-05:00'))
-                print("future schedules:", future_schedules)
+                #print("future schedules:", future_schedules)
                 upcoming_schedule = future_schedules[0]
                 self.status = 'No Live Prediction Available'
                 self.arrival_time = datetime.datetime.strptime(
@@ -106,9 +107,9 @@ class Timer:
 
     def set_prediction(self):
         self.predictions = sess.get(self.predictions_url, headers={"x-api-key": API_KEY})
-        print(self.predictions.headers)
+        #print(self.predictions.headers)
         self.predictions = self.predictions.json()
-        print("all predictions:", self.name, self.predictions)
+        #print("all predictions:", self.name, self.predictions)
         if 'data' in self.predictions:
             if self.predictions['data']:
                 json_data = self.predictions['data']
@@ -121,7 +122,7 @@ class Timer:
                                       if datetime.datetime.strptime(pred['attributes']['arrival_time'],
                                                                     '%Y-%m-%dT%H:%M:%S-05:00')
                                       > datetime.datetime.now()]
-                print("filtered predictions:", future_predictions)
+                #print("filtered predictions:", future_predictions)
                 if future_predictions:
                     future_predictions = sorted(future_predictions,
                                                 key=lambda x: datetime.datetime.strptime(
