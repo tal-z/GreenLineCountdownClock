@@ -9,17 +9,17 @@
             background-color: yellow;
         }
     </style>
-    <title>Look Up Stops</title>
+    <title>MBTA Countdown Timer Generator</title>
 </head>
 <body>
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6 m-auto">
                 <h3 class="texr-center mb-3">
-                    MBTA Stop Lookup
+                    MBTA Countdown Timer Generator
                 </h3>
                 <div class="form-group">
-                    <form action="/CreateTimer" method="post">
+                    <form action="/NewTimer" method="post">
                         <div id="transit-options-container">
                             <label for="transit-options">Choose a mode of transit:</label>
                             <select name="transit-options" id="transit-options" class="form-control form-control-lg" >
@@ -53,6 +53,7 @@
                         <div id="hidden-inputs-container" style="display:none">
                             <input type="text" name="stopid" id="stopid">
                             <input type="text" name="routeid" id="routeid">
+                            <input type="text" name="direction-name" id="direction-name">
                         </div>
                         <button type="submit" id="submit-button" class="btn btn-primary" style="display:none">Get My Countdown Timer!</button>
                     </form>
@@ -67,27 +68,41 @@
     const search = document.getElementById('search');
     const matchList = document.getElementById('match-list');
     const routeOptions = document.getElementById('route-options-container');
-    const directionOptions = document.getElementById('direction-options-container')
-    const stopID = document.getElementById('stopid')
-    const routeID = document.getElementById('routeid')
+    const directionOptions = document.getElementById('direction-options-container');
+    const stopID = document.getElementById('stopid');
+    const routeID = document.getElementById('routeid');
+    const directionName = document.getElementById('direction-name');
+
 
     const searchStops = async searchText => {
-        let transitMode = document.getElementById('transit-options').value;
-        var transitModeDict = {'subway': '0,1', 'commuter-rail': '2', 'bus': '3', 'ferry': '4'};
-
-        const res = await fetch(
-            `https://api-v3.mbta.com/stops?fields[stop]=name,description&filter[route_type]=${transitModeDict[transitMode]}`
-            );
-        const stops = await res.json();
         document.getElementById('route-options-container').style.display = "none";
         document.getElementById('direction-options-container').style.display = "none";
         document.getElementById('direction-options-container').style.display = "none";
         document.getElementById('submit-button').style.display = "none";
-
-
         if (matchList.style.display == 'none') {
            matchList.style.display = 'block'
         };
+
+        let transitMode = document.getElementById('transit-options').value;
+        var transitModeDict = {'subway': '0,1', 'commuter-rail': '2', 'bus': '3', 'ferry': '4'};
+        let stops_url = ''
+        if (transitMode !== 'bus' && transitMode !== '') {
+            let routes_url = `https://api-v3.mbta.com/routes?filter[type]=${transitModeDict[transitMode]}`;
+            const routes_res = await fetch(routes_url).then(res => res.json());
+            let routes_data = routes_res.data;
+            let route_ids = routes_data.map(route => route.id);
+            console.log(route_ids);
+            stops_url = `https://api-v3.mbta.com/stops?filter[route]=${route_ids}`;
+        }
+        else {
+            stops_url = `https://api-v3.mbta.com/stops?filter[route_type]=${transitModeDict[transitMode]}`;
+        }
+
+        console.log(stops_url);
+        const stops_res = await fetch(stops_url);
+        const stops = await stops_res.json();
+        console.log(stops);
+  
 
         let matches = stops.data.filter(stop => {
             const regex = new RegExp(`${searchText}`, 'gi');
@@ -111,7 +126,7 @@
         if(matches.length > 0) {
             const html = matches.map(match => `
                 <div class="card card-body" onclick="populateSearch()" data-stopid="${match.id}">
-                    <h4 data-stopid="${match.id}"><span class="text-primary" data-stopid="${match.id}">Name: ${match.attributes.name}<br>Description: ${match.attributes.description}</span><br></h4>
+                    <h4 data-stopid="${match.id}"><span class="text-primary" data-stopid="${match.id}">Name: ${match.attributes.name}<br>Address: ${match.attributes.address}<br>Description: ${match.attributes.descriptions}</span><br></h4>
                 </div>
             `).join('');            
             matchList.innerHTML = html; // Note for later to try and understand why not to do this.
@@ -119,10 +134,12 @@
     }
 
     function populateSearch(route_array) {
+        let transitMode = document.getElementById('transit-options').value;
+        var transitModeDict = {'subway': '0,1', 'commuter-rail': '2', 'bus': '3', 'ferry': '4'};
         var x = event.clientX, y = event.clientY,
         elementMouseIsOver = document.elementFromPoint(x, y);
         stopID.value = elementMouseIsOver.dataset.stopid;
-        let re = /Name:\s(.*)Description/;
+        let re = /Name:\s(.*)Address/;
         let stopContent = elementMouseIsOver.textContent.match(re)[1];
         document.getElementById('search').value = stopContent;
         matches = [];
@@ -131,9 +148,7 @@
         if (matchList.style.display != 'none') {
            matchList.style.display = 'none';
         }
-        // after populating search, I want to make an API call and get the routes available at a given stop with which to populate the drop-down.
-        // leaving off: my last then logs route.data, which is an array of all the routes at a given stop
-        let routes = fetch(`https://api-v3.mbta.com/routes?filter[stop]=${elementMouseIsOver.dataset.stopid}`);
+        let routes = fetch(`https://api-v3.mbta.com/routes?filter[stop]=${elementMouseIsOver.dataset.stopid}&filter[type]=${transitModeDict[transitMode]}`);
         routes.then(
             (route) => route.json()
             ).then(
@@ -172,6 +187,10 @@
         }
     
     function showButton() {
+        const directionName = document.getElementById('direction-name');
+        let directionNameId = Number(directionOptions.children[1].value) + 1;
+        directionName.value = directionOptions.children[1].children[directionNameId].textContent;
+        console.log(directionName);
         document.getElementById('submit-button').style.display = "block";
     }
 
