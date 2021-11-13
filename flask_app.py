@@ -54,28 +54,47 @@ def index():
     d_timer.set_timer()
     return render_template("index.html")
 
+
 @app.route("/_update_timer/<tmr>", methods=["GET", "POST"])
 def timer(tmr):
     timers[tmr].decrement()
     seconds_remaining = timers[tmr].duration
+    print(seconds_remaining)
     display = timers[tmr].set_display()
     return jsonify({f'{timers[tmr].name}_display': display,
                     f'{timers[tmr].name}_seconds_remaining': f'{seconds_remaining} seconds'})
 
-@app.route("/StopLookup", methods=["GET"])
-def stop_lookup():
-    return render_template("StopLookup.html")
+
+@app.route("/NewTimer", methods=["GET", "POST"])
+def new_timer():
+    """Displays the new timer created in the CreateTimer route"""
+    if request.method == 'POST':
+        print(request.values)
+        stop_name = request.values.get('search').replace(" ", "-")
+        stop_id = request.values.get('stopid')
+        route_id = request.values.get('routeid')
+        direction_id = request.values.get('direction-options')
+        predictions_url = f'https://api-v3.mbta.com/predictions/?filter[stop]={stop_id}&filter[route]={route_id}&filter[direction_id]={direction_id}'
+        schedule_url=f'https://api-v3.mbta.com/schedules/?filter[stop]={stop_id}&filter[route]={route_id}&filter[direction_id]={direction_id}'
+        new_timer = Timer(duration=-1, predictions_url=predictions_url, schedule_url=schedule_url, name="new")
+        new_timer.set_timer()
+        timers[new_timer.name] = new_timer
+        context = {
+            "new_timer": new_timer,
+            }
+        return render_template("NewTimer.html", context=context)
+    else:
+        timers["new"].set_timer()
+        context = {
+            "new_timer": timers["new"]
+        }
+    return render_template("NewTimer.html", context=context)
+
+
 
 @app.route("/CreateTimer", methods=["GET", "POST"])
 def create_timer():
-    print("in the create_timer route")
-    if request.method == "POST":
-        """create a timer based on attributes passed in the post"""
-        print("you posted here!")
-        print(request.values)
-        return  render_template("NewTimer.html")
-    else:
-        return render_template("StopLookup.html")
+    return render_template("StopLookup.html")
 
 
 if __name__ == "__main__":
