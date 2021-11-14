@@ -8,9 +8,9 @@
 </head>
 <body>
   <div class="card">
-    <h5 class="card-header">Featured</h5>
     <div class="card-body">
-      <h5 class="card-title">{{ context.new_timer.name }}</h5>
+      <h5 class="card-title">{{ context.new_timer.stop_name }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ context.new_timer.route_name }} - {{ context.new_timer.direction_name }}</h6>    
       <p class="card-text"><span id="{{ context.new_timer.name }}_display"></span> | <span id="{{ context.new_timer.name }}_seconds_remaining"></span></p>
     </div>
   </div>
