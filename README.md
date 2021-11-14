@@ -1,7 +1,6 @@
 
 # Making a Countdown Timer!
 
---test commit for project rename
 
 ## Ideas for pairing:
 
