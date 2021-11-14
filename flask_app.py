@@ -68,27 +68,37 @@ def timer(tmr):
 @app.route("/NewTimer", methods=["GET", "POST"])
 def new_timer():
     """Displays the new timer created in the CreateTimer route"""
-    if request.method == 'POST':
-        print(request.values)
-        stop_name = request.values.get('search').replace(" ", "-")
-        stop_id = request.values.get('stopid')
-        route_id = request.values.get('routeid')
-        direction_id = request.values.get('direction-options')
-        predictions_url = f'https://api-v3.mbta.com/predictions/?filter[stop]={stop_id}&filter[route]={route_id}&filter[direction_id]={direction_id}'
-        schedule_url=f'https://api-v3.mbta.com/schedules/?filter[stop]={stop_id}&filter[route]={route_id}&filter[direction_id]={direction_id}'
-        new_timer = Timer(duration=-1, predictions_url=predictions_url, schedule_url=schedule_url, name="new")
-        new_timer.set_timer()
-        timers[new_timer.name] = new_timer
-        context = {
-            "new_timer": new_timer,
+    try:
+        if request.method == 'POST':
+            print(request.values)
+            stop_name = request.values.get('search')#.replace(" ", "-")
+            route_name = request.values.get('route-name')
+            stop_id = request.values.get('stopid')
+            route_id = request.values.get('routeid')
+            direction_id = request.values.get('direction-options')
+            direction_name = request.values.get('direction-name')
+            predictions_url = f'https://api-v3.mbta.com/predictions/?filter[stop]={stop_id}&filter[route]={route_id}&filter[direction_id]={direction_id}'
+            schedule_url=f'https://api-v3.mbta.com/schedules/?filter[stop]={stop_id}&filter[route]={route_id}&filter[direction_id]={direction_id}'
+            new_timer = Timer(duration=-1, predictions_url=predictions_url, schedule_url=schedule_url, name="new")
+            new_timer.stop_name = stop_name
+            new_timer.direction_name = direction_name
+            new_timer.route_name = route_name
+            new_timer.set_timer()
+            timers[new_timer.name] = new_timer
+            context = {
+                "new_timer": new_timer,
+                }
+            return render_template("NewTimer.html", context=context)
+        else:
+            timers["new"].set_timer()
+            context = {
+                "new_timer": timers["new"]
             }
         return render_template("NewTimer.html", context=context)
-    else:
-        timers["new"].set_timer()
-        context = {
-            "new_timer": timers["new"]
-        }
-    return render_template("NewTimer.html", context=context)
+    except KeyError:
+        return render_template("StopLookup.html")
+
+
 
 
 
