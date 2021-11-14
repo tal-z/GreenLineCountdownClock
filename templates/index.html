@@ -1,23 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="15">
-    <title>Title</title>
-</head>
-<body>
-    Eastbound Trains
-    <br><br>
-     B Train - Chestnut Hill Ave:
-   <span id="b_display"></span> | <span id="b_seconds_remaining"></span>
-     <br>
+{% extends 'base.html' %}
+{% block meta %}<meta http-equiv="refresh" content="15">{% endblock %}
 
-    C Train - Cleveland Circle:
-   <span id="c_display"></span> | <span id="c_seconds_remaining"></span>
+{% block content %}
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">B Train - Chestnut Hill Ave</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Eastbound</h6>    
+            <p class="card-text"><span id="b_display"></span> | <span id="b_seconds_remaining"></span></p>
+      </div>
+    </div>
+    <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">C Train - Cleveland Circle</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Eastbound</h6>    
+        <p class="card-text"><span id="c_display"></span> | <span id="c_seconds_remaining"></span></p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">D Train - Reservoir</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Eastbound</h6>    
+        <p class="card-text"><span id="d_display"></span> | <span id="d_seconds_remaining"></span></p>
+    </div>
+  </div>
     <br>
 
-    D Train - Reservoir:
-   <span id="d_display"></span> | <span id="d_seconds_remaining"></span>
    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
    <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
    <script type="text/javascript">
@@ -59,6 +66,4 @@
         )
       }
 </script>
-
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block meta %} {% endblock %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/yeti/bootstrap.min.css" integrity="sha384-mLBxp+1RMvmQmXOjBzRjqqr0dP9VHU2tb3FK6VB0fJN/AOu7/y+CAeYeWJZ4b3ii" crossorigin="anonymous">
+    <style>
+        div.card.card-body:hover {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">T-Minus MBTA</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link" href="/">My Timers</a>
+        <a class="nav-item nav-link" href="/CreateTimer">Create a Timer</a>
+        <a class="nav-item nav-link disabled" href="#">Account</a>
+        </div>
+    </div>
+</nav>
+
+{% block content %}<p>This is the base template's content!</p>{% endblock %}
+
+</body>
+</html>

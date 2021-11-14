@@ -60,7 +60,9 @@ const outputHtml = matches => {
     if(matches.length > 0) {
         const html = matches.map(match => `
             <div class="card card-body" onclick="populateSearch()" data-stopid="${match.id}">
-                <h4 data-stopid="${match.id}"><span class="text-primary" data-stopid="${match.id}">Name: ${match.attributes.name}<br>Address: ${match.attributes.address}<br>Description: ${match.attributes.descriptions}</span><br></h4>
+                <h4 data-stopid="${match.id}">
+                    <span class="text-primary" data-stopid="${match.id}"><b>Name:</b> ${match.attributes.name}<br><b>Address:</b> ${match.attributes.address}<br></span>
+                </h4>
             </div>
         `).join('');            
         matchList.innerHTML = html; // Note for later to try and understand why not to do this.

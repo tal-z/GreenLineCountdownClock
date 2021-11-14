@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!-- link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous" -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/cerulean/bootstrap.min.css" integrity="sha384-3fdgwJw17Bi87e1QQ4fsLn4rUFqWw//KU0g8TvV6quvahISRewev6/EocKNuJmEw" crossorigin="anonymous">
-    <style>
-        div.card.card-body:hover {
-            background-color: yellow;
-        }
-    </style>
-    <title>MBTA Countdown Timer Generator</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6 m-auto">
@@ -33,7 +22,7 @@
                         </div>
                         <div id="search-container">
                             <label for="search">Start Typing a Stop Name:</label>
-                            <input type="text" name="search" id="search" class="form-control form-control-lg" placeholder="Enter stop name...">
+                            <input type="text" autocomplete="off" name="search" id="search" class="form-control form-control-lg" placeholder="Enter stop name...">
                             <br>
                         </div>
                         <div id="route-options-container" style="display:none">
@@ -63,7 +52,6 @@
             </div>
         </div>
     </div>
-</body>
-<script src="{{ url_for('static', filename='js/StopLookup.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/StopLookup.js') }}"></script>
+{% endblock %}
 
-</html>
