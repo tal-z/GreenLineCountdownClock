@@ -60,9 +60,9 @@ const outputHtml = matches => {
     if(matches.length > 0) {
         const html = matches.map(match => `
             <div class="card card-body" onclick="populateSearch()" data-stopid="${match.id}">
-                <h4 data-stopid="${match.id}">
+                <div data-stopid="${match.id}">
                     <span class="text-primary" data-stopid="${match.id}"><b>Name:</b> ${match.attributes.name}<br><b>Address:</b> ${match.attributes.address}<br></span>
-                </h4>
+                </div>
             </div>
         `).join('');            
         matchList.innerHTML = html; // Note for later to try and understand why not to do this.
@@ -127,8 +127,10 @@ function populateDirections(routes) {
 function showButton() {
     const directionName = document.getElementById('direction-name');
     let directionNameId = Number(directionOptions.children[1].value) + 1;
+    const submitButton = document.getElementById('submit-button');
     directionName.value = directionOptions.children[1].children[directionNameId].textContent;
-    document.getElementById('submit-button').style.display = "block";
+    submitButton.style.display = "block";
+    submitButton.disabled = false;
 }
 
 transitOptions.addEventListener('change', () => searchStops(search.value));
